@@ -1,36 +1,37 @@
-cat > ~/self-heal/webhook.py << 'PY'
 from flask import Flask, request
-import subprocess, json, datetime, os
+import subprocess
+import logging
 
-LOG = "/var/log/selfheal-webhook.log"
+# Setup logging
+logging.basicConfig(
+    filename='/var/log/selfheal-webhook.log',
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s'
+)
+
 app = Flask(__name__)
 
-def log(msg):
-    """Write logs to a file with timestamp"""
-    with open(LOG, "a") as f:
-        f.write(f"{datetime.datetime.now().isoformat()} {msg}\n")
+@app.route("/", methods=["POST"])
+def webhook():
+    data = request.json
+    logging.info(f"Received alert: {data}")
 
-@app.route('/', methods=['POST'])
-def receive():
-    payload = request.get_json(force=True, silent=True) or {}
-    log("Received: " + json.dumps(payload))
+    if data and "alerts" in data:
+        for alert in data["alerts"]:
+            if alert["status"] == "firing" and alert["labels"].get("alertname") == "NginxDown":
+                logging.info("Triggering Ansible playbook to restart NGINX")
+                try:
+                    subprocess.run(
+                        ["/home/ubuntu/self-heal/run_ansible.sh"],
+                        check=True
+                    )
+                    logging.info("Playbook executed successfully")
+                except subprocess.CalledProcessError as e:
+                    logging.error(f"Playbook execution failed: {e}")
 
-    alerts = payload.get("alerts", [])
-    for a in alerts:
-        if a.get("status") != "firing":
-            continue
-        name = a.get("labels", {}).get("alertname", "Unknown")
-        # Run shell script that triggers ansible
-        try:
-            subprocess.check_call(
-                ["/home/ubuntu/self-heal/run_ansible.sh", name]
-            )
-            log(f"Triggered Ansible for alert: {name}")
-        except Exception as e:
-            log(f"ERROR running Ansible for {name}: {e}")
     return "OK", 200
 
+
 if __name__ == "__main__":
-    os.makedirs("/var/log", exist_ok=True)
     app.run(host="0.0.0.0", port=5001)
-PY
+
