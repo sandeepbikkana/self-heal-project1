@@ -1,14 +1,12 @@
 global:
-  resolve_timeout: 5m
+  resolve_timeout: 1m
 
 route:
-  group_by: ['alertname']
-  group_wait: 10s
-  group_interval: 1m
-  repeat_interval: 30m
-  receiver: 'selfheal-webhook'
+  receiver: selfheal-webhook
 
 receivers:
-  - name: 'selfheal-webhook'
+  - name: selfheal-webhook
     webhook_configs:
-      - url: 'http://<EC2_PUBLIC_IP>:5001/'
+      - url: "http://172.31.36.76:5001/"
+
+
