@@ -1,21 +1,8 @@
-cat > ~/self-heal/heal.yml << 'YAML'
-- name: Self-heal actions
+- name: Restart NGINX if down
   hosts: localhost
-  connection: local
-  become: true
-  vars:
-    nginx_container_name: nginx
+  become: yes
   tasks:
-    - name: Restart NGINX container when NginxDown
-      shell: docker restart {{ nginx_container_name }} || docker start {{ nginx_container_name }}
-      when: alertname == "NginxDown"
-
-    - name: Reduce load / restart NGINX when HighCPU
-      shell: docker restart {{ nginx_container_name }}
-      when: alertname == "HighCPU"
-
-    # OPTIONAL: Reboot host if CPU remains high for long time (disabled by default)
-    # - name: Reboot host (dangerous in demos; enable only if you want)
-    #   reboot:
-    #   when: alertname == "HighCPU" and (reboot_host | default(false))
-YAML
+    - name: Restart NGINX container with docker-compose
+      command: docker-compose -f /home/ubuntu/self-heal/docker-compose.yml restart nginx
+      args:
+        chdir: /home/ubuntu/self-heal/
