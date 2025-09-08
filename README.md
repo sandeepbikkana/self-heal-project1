@@ -1,7 +1,8 @@
 #PROJECTS LINKS
-https://github.com/sandeepbikkana/observability-stack-proj2
-https://github.com/sandeepbikkana/CICD-GitHubActions-locally-proj4
-https://github.com/sandeepbikkana/k3s-Istio-Proj7
+1)https://github.com/sandeepbikkana/self-heal-project1
+2)https://github.com/sandeepbikkana/observability-stack-proj2
+3)https://github.com/sandeepbikkana/CICD-GitHubActions-locally-proj4
+4)https://github.com/sandeepbikkana/k3s-Istio-Proj7
 
 
 
