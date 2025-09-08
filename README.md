@@ -1,3 +1,10 @@
+#PROJECTS LINKS
+https://github.com/sandeepbikkana/observability-stack-proj2
+https://github.com/sandeepbikkana/CICD-GitHubActions-locally-proj4
+https://github.com/sandeepbikkana/k3s-Istio-Proj7
+
+
+
 # Self‑Healing NGINX on AWS (Prometheus + Alertmanager + Ansible)
 
 This guide sets up a **self‑healing** stack where Prometheus detects failures, Alertmanager sends a webhook, a Flask service receives it, and an **Ansible playbook restarts your NGINX Docker container**.
